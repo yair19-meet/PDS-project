@@ -1,8 +1,11 @@
 import pandas as pd
 import numpy as np
+from pathlib import Path
+import matplotlib.pyplot as plt
 
 #reading file
-data = pd.read_csv('city_data.csv', delimiter='|')
+csv_path = Path(__file__).parent.parent / 'city_data.csv'
+data = pd.read_csv(csv_path, delimiter='|')
 
 #replacing the columns with first row
 new_header = data.iloc[0]
@@ -76,3 +79,10 @@ print(data[data["Average Cost of Living"] < 900].sort_values(by="Average Cost of
 data["avg salary - avg cost of living"] = data["Average Monthly Salary"] - data["Average Cost of Living"]
 print("\nDifference between cost of living and salary:\n")
 print(data[['City', "avg salary - avg cost of living"]].sort_values(by='avg salary - avg cost of living', ascending=False).head(5))
+
+#plot for showing correlation between Salary and Cost of Living
+fig, ax = plt.subplots()
+ax.scatter(data["Average Monthly Salary"], data["Average Cost of Living"])
+ax.set_xlabel("Salary")
+ax.set_ylabel("Cost of living")
+plt.show()
