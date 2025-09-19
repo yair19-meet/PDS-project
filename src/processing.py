@@ -1,10 +1,16 @@
 import pandas as pd
 import numpy as np
 
+#reading file
 data = pd.read_csv('city_data.csv', delimiter='|')
+
+#replacing the columns with first row
 new_header = data.iloc[0]
 data = data[1:]
 data.columns = new_header
+
+
+#spliting the City column to two seperate columns of City and Country
 cities = []
 states = []
 for i in range(len(data)):
@@ -21,57 +27,52 @@ for i in range(len(data)):
     else:
         states.append("")
 
-# data.reset_index(drop=True)
-
 data.drop(columns=['City'], inplace=True)
-
 data.insert(0, 'City', cities)
-
 data.insert(1, 'Country', states)
 
+
+#removing a column with missing values
 data.drop(columns=['Average Price Groceries'], inplace=True)
 
+#replacing missing values with zeros
 data.fillna('0', inplace=True)
 
+#removing duplicate rows
 data.drop_duplicates(inplace=True)
 
 pd.set_option("display.max_rows", None)
 pd.set_option("display.max_columns", None)
 
+#changing type of columns from string to int
 data['Population'] = data['Population'].astype(np.int64)
 data['Average Monthly Salary'] = data['Average Monthly Salary'].astype(np.int64)
 data['Average Cost of Living'] = data['Average Cost of Living'].astype(np.int64)
 
+#displaying the total population of each country in the data set
 population_ser = data.groupby('Country')['Population'].sum().sort_values(ascending=False)
 population_summary = pd.DataFrame({"Population Total": population_ser})
-
 print("\nPopulation Summary: \n")
-
 print(population_summary)
 
+#displaying data about quantity of cities
 cities_count_ser = data.groupby('Country')['City'].count().sort_values(ascending=False)
-
 amount_of_cities = pd.DataFrame({"Number of Cities": cities_count_ser})
-
 total_number_of_cities = amount_of_cities['Number of Cities'].sum()
-
 print("\nCities Summery:\n")
-
 print(amount_of_cities)
-
 print(f"\nAmount of Cities in total: {total_number_of_cities}\n")
 
-print("\nHigh Salary Cities:\n")
 
+#displaying data about cities with high salaries
+print("\nHigh Salary Cities:\n")
 print(data[data["Average Monthly Salary"] > 1600].sort_values(by='Average Monthly Salary', ascending=False)[["City", "Average Monthly Salary"]])
 
+#displaying data about cities with low cost of living
 print("\nLow Cost of living:\n")
-
 print(data[data["Average Cost of Living"] < 900].sort_values(by="Average Cost of Living", ascending=False)[["City", "Average Cost of Living"]])
 
-
+#calculating difference between average salary and average cost of living in cities
 data["avg salary - avg cost of living"] = data["Average Monthly Salary"] - data["Average Cost of Living"]
-
 print("\nDifference between cost of living and salary:\n")
-
 print(data[['City', "avg salary - avg cost of living"]].sort_values(by='avg salary - avg cost of living', ascending=False).head(5))
