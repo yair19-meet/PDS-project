@@ -33,9 +33,45 @@ data.drop(columns=['Average Price Groceries'], inplace=True)
 
 data.fillna('0', inplace=True)
 
+data.drop_duplicates(inplace=True)
+
 pd.set_option("display.max_rows", None)
 pd.set_option("display.max_columns", None)
 
-print(data.head(83))
+data['Population'] = data['Population'].astype(np.int64)
+data['Average Monthly Salary'] = data['Average Monthly Salary'].astype(np.int64)
+data['Average Cost of Living'] = data['Average Cost of Living'].astype(np.int64)
+
+population_ser = data.groupby('Country')['Population'].sum().sort_values(ascending=False)
+population_summary = pd.DataFrame({"Population Total": population_ser})
+
+print("\nPopulation Summary: \n")
+
+print(population_summary)
+
+cities_count_ser = data.groupby('Country')['City'].count().sort_values(ascending=False)
+
+amount_of_cities = pd.DataFrame({"Number of Cities": cities_count_ser})
+
+total_number_of_cities = amount_of_cities['Number of Cities'].sum()
+
+print("\nCities Summery:\n")
+
+print(amount_of_cities)
+
+print(f"\nAmount of Cities in total: {total_number_of_cities}\n")
+
+print("\nHigh Salary Cities:\n")
+
+print(data[data["Average Monthly Salary"] > 1600].sort_values(by='Average Monthly Salary', ascending=False)[["City", "Average Monthly Salary"]])
+
+print("\nLow Cost of living:\n")
+
+print(data[data["Average Cost of Living"] < 900].sort_values(by="Average Cost of Living", ascending=False)[["City", "Average Cost of Living"]])
 
 
+data["avg salary - avg cost of living"] = data["Average Monthly Salary"] - data["Average Cost of Living"]
+
+print("\nDifference between cost of living and salary:\n")
+
+print(data[['City', "avg salary - avg cost of living"]].sort_values(by='avg salary - avg cost of living', ascending=False).head(5))
