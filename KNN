@@ -4,6 +4,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 from sklearn.impute import KNNImputer
 from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LinearRegression
+import mplcursors
 
 # ---- Reading file ----
 csv_path = Path(__file__).parent / 'city_data.csv'
@@ -65,10 +67,6 @@ data.drop_duplicates(inplace=True)
 pd.set_option("display.max_rows", None)
 pd.set_option("display.max_columns", None)
 
-#changing type of columns from string to int
-data['Population'] = data['Population'].astype(np.int64)
-data['Average Monthly Salary'] = data['Average Monthly Salary'].astype(np.int64)
-data['Average Cost of Living'] = data['Average Cost of Living'].astype(np.int64)
 
 #displaying the total population of each country in the data set
 population_ser = data.groupby('Country')['Population'].sum().sort_values(ascending=False)
@@ -99,8 +97,38 @@ print("\nDifference between cost of living and salary:\n")
 print(data[['City', "avg salary - avg cost of living"]].sort_values(by='avg salary - avg cost of living', ascending=False).head(5))
 
 #plot for showing correlation between Salary and Cost of Living
-fig, ax = plt.subplots()
-ax.scatter(data["Average Monthly Salary"], data["Average Cost of Living"])
-ax.set_xlabel("Salary")
-ax.set_ylabel("Cost of living")
+
+# Prepare data
+x = data["Average Monthly Salary"].values.reshape(-1, 1)
+y = data["Average Cost of Living"].values
+
+# Fit linear regression
+model = LinearRegression()
+model.fit(x, y)
+y_pred = model.predict(x)
+
+# Close any existing figures (prevents leftover lines from previous interactive runs)
+plt.close('all')
+
+# Scatter plot
+fig, ax = plt.subplots(figsize=(8,6))
+sc = ax.scatter(x, y, c='blue', alpha=0.6)
+
+# Regression line
+ax.plot(x, y_pred, color='red', linestyle='--', label='Regression Line')
+
+
+ax.set_xlabel("Average Monthly Salary")
+ax.set_ylabel("Average Cost of Living")
+ax.set_title("Salary vs Cost of Living")
+ax.legend()
+
+# Make points clickable to show city
+cursor = mplcursors.cursor(sc, hover=True)
+@cursor.connect("add")
+def on_add(sel):
+    index = sel.index
+    sel.annotation.set(text=data.iloc[index]["City"])
+
 plt.show()
+
