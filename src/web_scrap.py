@@ -97,7 +97,8 @@ class geo_Spider(scrapy.Spider):
       if url:
           yield response.follow(url, callback=self.parse_4)
       else:
-          self.logger.warning(f"No page found for country: {country}")
+          #self.logger.warning(f"No page found for country: {country}")
+          self.logger.warning(f"..")
       
 
   def parse_4(self, response):
@@ -105,7 +106,8 @@ class geo_Spider(scrapy.Spider):
       if url:
         yield response.follow(url, callback=self.parse_5)
       else:
-        self.logger.warning(f"No city list found on {response.url}")
+        # self.logger.warning(f"No city list found on {response.url}")
+         self.logger.warning(f"..")
 
   def parse_5(self, response):
     for city in cities:
@@ -113,7 +115,8 @@ class geo_Spider(scrapy.Spider):
       if url:
         yield response.follow(url, callback=self.parse_6)
       else:
-        self.logger.warning(f"No page found for city: {city}")
+        # self.logger.warning(f"No page found for city: {city}")
+         self.logger.warning(f"..")
 
   def parse_6(self, response):
     coord = {"latitude" : response.xpath('//span[contains(@class, "latitude")]/text()').extract_first(), \
