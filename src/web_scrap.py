@@ -135,5 +135,9 @@ print("Coordinates: \n\n\n")
 #print(geo_Spider.coordinates)
 
 df = pd.DataFrame.from_dict(geo_Spider.coordinates, orient='index')
+df.dropna(inplace=True)
 print(df)
+
+df.to_csv('coordinates.csv')
+
 
