@@ -17,6 +17,7 @@ We also provide the **interactive dashboard as a `.py` file**, in case running i
 ## Dependencies
 To run the notebook and dashboard, the following Python libraries are required:
 - BeautifulSoup
+- requests
 - coordinate-parser
 - Dash
 - Matplotlib
