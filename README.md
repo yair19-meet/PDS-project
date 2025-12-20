@@ -27,6 +27,7 @@ To run the notebook and dashboard, the following Python libraries are required:
 - rapidfuzz
 - Scikit-learn
 - Seaborn
+- lxml
 
 > The notebook includes an option to install missing libraries automatically.
 
