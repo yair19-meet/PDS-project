@@ -176,7 +176,7 @@ def create_city_layout(city_name):
     city_data = df_main[df_main['City_Name'] == city_name].iloc[0]
     
     return html.Div([
-        # 1. Compact Header (Same as before)
+        # 1. Compact Header
         html.Div([
             html.Div([
                 dcc.Link("← Back", href="/", style={'textDecoration': 'none', 'color': '#7F8C8D', 'fontWeight': 'bold', 'fontSize': '14px', 'marginRight': '15px'}),
@@ -196,7 +196,7 @@ def create_city_layout(city_name):
         
         # 2. Main Dashboard Content
         html.Div([
-            # -- Left Sidebar: Stats (Now Empty Container) --
+            # -- Left Sidebar: Stats --
             html.Div(id='sidebar-stats-container', style={'width': '250px', 'backgroundColor': 'white', 'padding': '15px', 'borderRadius': '10px', 'marginRight': '15px', 'boxShadow': '0 2px 5px rgba(0,0,0,0.05)', 'overflowY': 'auto'}),
             
             # -- Right Area: Charts --
@@ -322,7 +322,7 @@ def update_details(pathname, compare_city):
     base_city = unquote(pathname.split('/')[-1])
     base_data = df_main[df_main['City_Name'] == base_city].iloc[0]
     
-    # --- 1. Sidebar Logic (Kept as requested) ---
+    # --- 1. Sidebar Logic ---
     comp_data = None
     if compare_city:
         comp_data = df_main[df_main['City_Name'] == compare_city].iloc[0]
@@ -361,7 +361,7 @@ def update_details(pathname, compare_city):
     ])
 
 
-    # --- 2. Chart Logic (Restored Original Title Text) ---
+    # --- 2. Chart Logic ---
     current_val = base_data['Average Cost of Living']
     delta = None
     gauge_title = f"Cost of Living: {base_city}"
@@ -370,12 +370,11 @@ def update_details(pathname, compare_city):
         ref_val = comp_data['Average Cost of Living']
         diff = current_val - ref_val
         
-        # --- RESTORED LOGIC HERE ---
         if diff > 0:
             gauge_title = f"{base_city} is ${diff:,.0f} More Expensive than {compare_city}"
         else:
             gauge_title = f"{base_city} is ${abs(diff):,.0f} Cheaper than {compare_city}"
-        # ---------------------------
+       
 
         delta = {'reference': ref_val, 'relative': False, 'valueformat': '$,.0f'}
 
